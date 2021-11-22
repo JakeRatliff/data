@@ -1,0 +1,21 @@
+PatientAge,STAT,2018,2019,2020
+Newborns,STAT 1,1,0,0
+Newborns,STAT 2,11,9,11
+Newborns,STAT 3,4,6,7
+Newborns,STAT 4,27,22,21
+Newborns,STAT 5,10,18,22
+Infants,STAT 1,29,28,20
+Infants,STAT 2,23,36,25
+Infants,STAT 3,12,18,15
+Infants,STAT 4,36,32,31
+Infants,STAT 5,2,2,0
+Children,STAT 1,32,43,45
+Children,STAT 2,41,36,36
+Children,STAT 3,8,14,7
+Children,STAT 4,13,28,17
+Children,STAT 5,1,0,0
+Adults,STAT 1,23,18,22
+Adults,STAT 2,19,51,40
+Adults,STAT 3,5,6,4
+Adults,STAT 4,6,21,15
+Adults,STAT 5,13,20,0
