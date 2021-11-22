@@ -1,0 +1,11 @@
+STAT,Procedure Type,# of Procedures,# of Mortalities,% Mortalities,STS National Benchmark
+STAT 1,Ventricular Septal Defect Repair,56,0,0%,0.44%
+STAT 2,Fonton,35,0,0%,1.06%
+STAT 2,Coarctation,28,0,0%,0.98%
+STAT 2,Glenn/HemiFontan,46,1,2.17%,1.98%
+STAT 2,Tetrology of Fallot,46,0,0%,1.18%
+STAT 3,Arterioventricular Canal Repair,42,0,0%,1.91%
+STAT 3,Arterial Switch Operation and Ventricular Septal Defect Repair,14,0,0%,5.45%
+STAT 3,Arterial Switch Operation,21,1,0%,1.88%
+STAT 4,Truncus Arteriosus Repair,6,0,0%,9.23%
+STAT 5,Norwood,42,4,9.52%,12.31%
