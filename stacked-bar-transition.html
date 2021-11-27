@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<div id="tall_div" style="height:2500px; width:100px; background-color: pink;">This div is here to take up space. Scroll down to see what chart looks like when scrolled into view.</div>
+<div id="graph_and_legend_container">
+    <div id="valve_graph_title">Number of Mitral Valves Repair and Replacement Surgeries at Duke from 2015 - 2020</div>
+    <div id="valve_repair_replace_procedures_legend"></div>
+    <div id="valve_repair_replace_procedures_2015-2020"></div>
+    <div id="valve_graph_data_source">Source: Duke Health data, 2015-2020</div>
+</div>
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<style>
+#valve_repair_replace_procedures_2015-2020 text,
+#valve_repair_replace_procedures_legend {
+    font: 12px Helvetica;
+}
+
+#valve_repair_replace_procedures_legend {
+    border: 1px solid darkgray;
+    padding: 5px;
+    border-radius: 2px;
+}
+</style>
+<style>
+#valve_repair_replace_procedures_2015-2020 text,
+#valve_repair_replace_procedures_legend {
+    font: 12px Helvetica;
+}
+
+#valve_repair_replace_procedures_legend div {
+    margin: 0 8px;
+}
+
+#valve_repair_replace_procedures_legend {
+    border: 1px solid darkgray;
+    /*width: 120px;*/
+    display: flex;
+    padding: 5px;
+    border-radius: 2px;
+}
+
+#valve_graph_title {
+    width: 480px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#valve_graph_data_source {
+    font-size: 75%;
+    font-style: italic;
+    margin-left: 5%;
+    margin-top: 10px;
+}
+
+.toolTip {
+	display: none;
+    font: 12px Helvetica;
+    position: absolute;
+    min-width: 50px;
+    height: auto;
+    background-color: rgb(255, 255, 255, 0.75);
+    border: 1px solid darkgray;
+    border-radius: 2px;
+    padding: 4px;
+    text-align: center;
+}
+</style>
+<script>
+var device_width = window.screen.width;
+console.log(device_width);
+
+var container = document.querySelector("#graph_and_legend_container");
+//container.style.marginBottom = '40px';
+var legend = document.querySelector("#valve_repair_replace_procedures_legend");
+var title = document.querySelector("#valve_graph_title");
+
+
+// set the dimensions and margins of the graph
+var margin = { top: 10, right: 30, bottom: 20, left: 50 },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var vbw = width + margin.left + margin.right;
+var vbh = height + margin.top + margin.bottom
+
+// append the svg object to the body of the page
+if (device_width < 600) {
+    //using viewbox for mobile devices:
+    var svg = d3.select("#valve_repair_replace_procedures_2015-2020")
+        .append("svg")
+        .attr("viewBox", "0 0 " + vbw + " " + vbh)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    title.style.width = '100%';
+
+} else {
+    //using height and width attributes
+    var svg = d3.select("#valve_repair_replace_procedures_2015-2020")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    legend.style.width = '310px';
+    legend.style.marginLeft = '85px';
+    container.style.marginLeft = '15%';
+
+}
+
+// get the data
+d3.csv("https://raw.githubusercontent.com/JakeRatliff/dh-valve-data/main/Valves%20Data%20-%20Sheet1.csv", function(data) {
+    console.log("v", data)
+    //subgroups = header of the csv files
+    var subgroups = data.columns.slice(1)
+    subgroups.pop()
+    console.log(subgroups)
+
+    // List of groups = years = value of the first column called group on x axis
+    var groups = d3.map(data, function(d) { return (d.Year) }).keys()
+    console.log(groups)
+
+    // Add X axis
+    var x = d3.scaleBand()
+        .domain(groups)
+        .range([0, width])
+        .padding([0.2])
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+        //.domain([0, 60])
+        .domain([0, d3.max(data, function(d) { return +d.Total; })])
+        .range([height, 0]);
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .attr("id", "valve_graph_x_axis")
+        .call(d3.axisBottom(x).tickSizeOuter(0))
+        .transition().duration(1500);
+
+    var xAxis = document.querySelector("#valve_graph_x_axis");
+
+    // color palette = one color per subgroup
+    var color = d3.scaleOrdinal()
+        .domain(subgroups)
+        .range(['#00539B', '#E0750B'])
+
+    //stack the data? --> stack per subgroup
+    var stackedData = d3.stack()
+        .keys(subgroups)
+        (data)
+
+    //tooltip
+    var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+    //Run transisions once, when the chart is fully in view:
+    var count = 0;
+    var xAxis = document.querySelector("#valve_graph_x_axis");
+    document.addEventListener('scroll', function(e) {
+        var rect = xAxis.getBoundingClientRect();
+        //if (rect.bottom <= document.documentElement.clientHeight && count == 0) {
+        //anticipate x axis in view:
+        if (rect.top - 50 <= document.documentElement.clientHeight && count == 0) {
+            console.log("..x_axis scrolled into view..")
+            main.selectAll("rect")
+                .attr("y", function(d) { return y(0); })
+                .attr("height", 0)
+                .transition()
+                .duration(1500)
+                .attr("y", function(d) { return y(d[1]); })
+                .attr("height", function(d) { return y(d[0]) - y(d[1]); });
+            main.selectAll(".datalabel")
+                .style("opacity", "0%")
+                .transition()
+                .duration(4000)
+                .style("opacity", "100%");
+            count++;
+        }
+    })
+
+    // Show the bars
+
+    var main = svg.append("g")
+        .selectAll("g")
+        // Enter in the stack data = loop key per key = group per group
+        .data(stackedData)
+        .enter()
+        .append("g")
+        .attr("fill", function(d) { return color(d.key); })
+        .attr("class", function(d) { var className = d.key.replace(' ', '').toLowerCase(); return className });
+
+    main.selectAll("rect")
+        // enter a second time = loop subgroup per subgroup to add all rectangles
+        .data(function(d) { return d; })
+        .enter().append("rect")
+        .attr("x", function(d) { return x(d.data.Year); })
+        .attr("width", x.bandwidth())
+
+        .attr("data-total", function(d) { return d.data.Total })
+        .on("mousemove", function(d) {
+            if (device_width < 600) {
+                tooltip
+                    .style("display", "none")
+            } else { //tooltip desktop
+                tooltip
+                    .style("left", d3.event.pageX - 35 + "px")
+                    .style("top", d3.event.pageY - 25 + "px")
+                    .style("display", "inline-block")
+                    .html("Total: " + this.getAttribute("data-total"));
+            }
+
+        })
+        .on("mouseout", function(d) { tooltip.style("display", "none"); })
+        .attr("class", "bar")
+        .attr('y', 0)
+        .attr('height', 0)
+        .on("click", function(d) {
+            if (device_width < 600) {
+                tooltip
+                	//.style("font-size", "25px")
+                    .style("left", d3.event.pageX - 35 + "px")
+                    .style("top", d3.event.pageY - 25 + "px")
+                    .style("display", "inline-block")
+                    .html("Total: " + this.getAttribute("data-total"));
+            } 
+        });
+
+    main.selectAll(".repairedvalves")
+        .data(function(d) { return stackedData[0]; })
+        .enter().append("text")
+        .attr("class", "datalabel")
+        .style("fill", "white")
+        .attr("x", function(d) { return x(d.data.Year); })
+        .attr("y", function(d) { return y(+d.data['Repaired Valves'] / 2); })
+        .attr("text-anchor", "middle")
+        .attr("dx", 24)
+        .text(function(d) { console.log(d); return d.data['Repaired Valves'] })
+        .style("opacity", "0%");
+
+    main.selectAll(".replacedvalves")
+        .data(function(d) { return stackedData[1]; })
+        .enter().append("text")
+        .attr("class", "datalabel")
+        .style("fill", "white")
+        .attr("x", function(d) { return x(d.data.Year); })
+        .attr("y", function(d) { return y(+d.data['Repaired Valves'] + (+d.data['Replaced Valves'] / 2)); })
+        .attr("text-anchor", "middle")
+        .attr("dx", 24)
+        .text(function(d) { console.log(d); return d.data['Replaced Valves'] })
+        .style("opacity", "0%");
+
+    var legend = d3.select('#valve_repair_replace_procedures_legend')
+        .selectAll('div')
+        .data(subgroups.reverse())
+        .enter()
+        .append('div')
+        .text(function(d) {
+            return d;
+        })
+        .append('div')
+        .style('float', 'left')
+        .style('height', '10px')
+        .style('width', '25px')
+        .style('margin-right', '4px')
+        .style('margin-top', '2px')
+        .style('background-color', function(d) { return color(d); })
+
+})
+</script>
