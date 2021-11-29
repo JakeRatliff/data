@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div id="tall_div" style="height:2500px; width:100px; background-color: pink;">This div is here to take up space. Scroll down to see what chart looks like when scrolled into view.</div>
+<div id="stat-chart-outermost">
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<div id='stat-chart-title'>Heart Procedures by STAT Level 2018-2020</div>
+<div id='stat-chart-prompt-interaction'>Select the patient age range:</div>
+<div id='stat-chart-buttons'>
+  <div class="stat-chart-btn" data-value="Newborns">Newborns</div>
+  <div class="stat-chart-btn" data-value="Infants">Infants</div>
+  <div class="stat-chart-btn" data-value="Children">Children</div>
+  <div class="stat-chart-btn" data-value="Adults">Adults</div>
+</div>
+<div id="stat-chart-1"></div>
+<div id="stat-chart-1-legend"></div>
+<style>
+  #stat-chart-outermost{
+    font-family: sans-serif;
+  }
+  #stat-chart-title, #stat-chart-prompt-interaction{
+    text-align: center;
+  }
+  #stat-chart-title{
+    font-weight: bold;
+  }
+  #stat-chart-buttons{
+    display: flex;
+    justify-content: center;
+  }
+  .stat-chart-btn{
+    height: 20px;
+    width: 65px;
+    /*padding-top: 5px;*/
+    border: 1px solid grey;
+    border-radius: 20px;
+    margin: 4px;
+    text-align: center;
+    font-family: Helvetica;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .stat-btn-selected{
+    background-color: #414042;
+    color: white;
+  }
+  .stat-chart-btn-subtext{
+    font-size: 12px;
+
+  }
+  .stat-axis{
+    font-size: 12px;
+    font-weight: 400;
+  }
+  #stat-chart-1-legend{
+    font-size: 12px;
+    display: flex;
+    /*border: 1px solid darkgray;*/
+    padding: 5px;
+    border-radius: 2px;
+    justify-content: center;
+  }
+  #stat-chart-1-legend div{
+    padding: 0px 5px;
+  }
+</style>
+<script>
+var device_width = window.screen.width;
+console.log(device_width);
+
+var container = document.querySelector("#stat-chart-outermost");
+var legend = document.querySelector("#stat-chart-1-legend");
+var title = document.querySelector("#stat-chart-title");
+
+// set the dimensions and margins of the graph
+var margin = { top: 10, right: 30, bottom: 20, left: 50 },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var vbw = width + margin.left + margin.right;
+var vbh = height + margin.top + margin.bottom
+
+// append the svg object to the body of the page
+if (device_width < 600) {
+    //using viewbox for mobile devices:
+    var svg = d3.select("#stat-chart-1")
+        .append("svg")
+        .attr("viewBox", "0 0 " + vbw + " " + vbh)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    title.style.width = '100%';
+
+} else {
+    //using height and width attributes
+    var svg = d3.select("#stat-chart-1")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    legend.style.width = '310px';
+    legend.style.marginLeft = '85px';
+    container.style.marginLeft = '15%';
+    container.style.width = '460px';
+
+}
+
+
+var dataSource = "https://raw.githubusercontent.com/JakeRatliff/data/main/Procedures%20by%20STAT%20Level%20-%20Sheet1.csv";
+var _transition = 350
+/*
+var margin = { top: 10, right: 30, bottom: 20, left: 50 },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var svg = d3.select("#stat-chart-1")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+*/
+d3.csv(dataSource, function(data) {
+    console.log("DATA", data)
+    var subgroups = data.columns.slice(1)
+    subgroups.shift();
+    console.log("SUBGROUPS", subgroups)
+
+    var groups = d3.map(data, function(d) { return (d.STAT) }).keys()
+    console.log("GROUPS", groups)
+
+    var PatientAges = d3.map(data, function(d) { return (d.PatientAge) }).keys()
+
+    var x = d3.scaleBand()
+        .domain(groups)
+        .range([0, width])
+        .padding([0.2])
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .attr("class", "stat-axis")
+        .attr("id", "stat-chart-x-axis")
+        .call(d3.axisBottom(x).tickSize(0));
+
+    var y = d3.scaleLinear()
+        .domain([0, 51])
+        .range([height, 0]);
+    svg.append("g")
+        .call(d3.axisLeft(y))
+        .attr("class", "stat-axis");
+
+    var xSubgroup = d3.scaleBand()
+        .domain(subgroups)
+        .range([0, x.bandwidth()])
+        .padding([0.00])
+
+    var selector = d3.select("#stat-chart-dropdown")
+        .append("select")
+        .attr("id", "dropdown")
+    selector.selectAll("option")
+        .data(PatientAges)
+        .enter().append("option")
+        .attr("value", function(d) {
+            return d
+        })
+        .text(function(d) {
+            return d
+        })
+
+    var color = d3.scaleOrdinal()
+        .domain(subgroups)
+        .range(['#E0750B', '#EEBD60', '#407E99'])
+
+
+    var draw = function(age) {
+        filteredData = data.filter(function(d) { return d.PatientAge == age })
+        var selection = svg.append("g")
+            .selectAll("g")
+            .data(filteredData)
+            .enter()
+            .append("g")
+            .attr("class", "bar-group")
+            .attr("transform", function(d) { return "translate(" + x(d.STAT) + ",0)"; });
+          selection
+            .selectAll("rect")
+            .data(function(d) { return subgroups.map(function(key) { return { key: key, value: d[key] }; }); })
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("data-label", function(d) { console.log(d.value);return d.value})
+            .attr("x", function(d) { return xSubgroup(d.key); })
+            .attr("y", function(d) {
+                return y(0);
+            })
+            .attr("height", 0)
+            .transition().duration(_transition)
+            .attr("y", function(d) { return y(d.value); })
+            .attr("width", xSubgroup.bandwidth())
+            .attr("height", function(d) { return height - y(d.value); })
+            .attr("fill", function(d) { return color(d.key); });
+
+        selection
+            .selectAll("text")
+            .data(function(d) { return subgroups.map(function(key) { return { key: key, value: d[key] }; }); })
+            .enter().append("text")
+            .attr("class", "label")
+            .attr("font-size", "12px")
+            .attr("text-anchor", "middle")
+            .attr("y", function(d) {
+                var yPos = y(d.value) + 12;
+                if(yPos > 367.5){
+                  yPos = yPos - 14;
+                }
+                return yPos
+            })
+            .attr("x", function(d) { return xSubgroup(d.key)+9.65 })
+            .attr("opacity", 0)
+            .text(function (d) {
+                return d.value;
+            })
+            .transition().duration(5000)
+            .attr("opacity", 100);
+    }
+
+    //initial draw
+
+    //Run transisions once, when the chart is fully in view:
+    var count = 0;
+    var xAxis = document.querySelector("#stat-chart-x-axis");
+    document.addEventListener('scroll', function(e) {
+        var rect = xAxis.getBoundingClientRect();
+        //if (rect.bottom <= document.documentElement.clientHeight && count == 0) {
+        //anticipate x axis in view:
+        if (rect.top <= document.documentElement.clientHeight && count == 0) {
+            draw(initAgeRange);
+            count++;
+        }
+    })
+
+
+    var initAgeRange = "Infants"
+    var initbtn = document.querySelector("[data-value='"+initAgeRange+"']");
+    initbtn.classList.add('stat-btn-selected');
+
+    var buttons = document.getElementsByClassName("stat-chart-btn");
+    for(i=0; i<buttons.length; i++){
+      var firstWord = buttons[i].innerHTML.split("<br>")[0];
+      firstWord.bold();
+      buttons[i].addEventListener("click", function(e){
+        var siblings = getSiblings(e.target);
+        for(i=0; i<siblings.length; i++){
+          siblings[i].classList.remove('stat-btn-selected');
+        }
+        e.target.classList.add('stat-btn-selected');
+        selection = e.target.getAttribute('data-value');
+        d3.selectAll("rect").transition().duration(_transition)
+            .attr("y", function(d) {
+                return y(0);
+            })
+            .attr("height", 0)
+            .remove();
+        d3.selectAll(".label").remove()
+        //redraw
+        draw(selection);
+
+      })
+    }
+
+
+    var getSiblings = function (elem) {
+      var siblings = [];
+      var sibling = elem.parentNode.firstChild;
+      while (sibling) {
+      if (sibling.nodeType === 1 && sibling !== elem) {
+      siblings.push(sibling);
+      }
+      sibling = sibling.nextSibling
+      }
+      return siblings;
+    };
+
+    var legend = d3.select('#stat-chart-1-legend')
+        .selectAll('div')
+        .data(subgroups)
+        .enter()
+        .append('div')
+        .text(function(d) {
+            return d;
+        })
+        .append('div')
+        .style('float', 'left')
+        .style('height', '10px')
+        .style('width', xSubgroup.bandwidth())
+        .style('margin-right', '4px')
+        .style('margin-top', '4px')
+        .style('background-color', function(d) { return color(d); })
+
+})
+
+
+</script>
+</div>
