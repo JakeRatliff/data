@@ -1,18 +1,23 @@
-<div id="stat-chart-outermost">
-    <!-- Load d3.js -->
-    <script src="https://d3js.org/d3.v4.js"></script>
-    <div id="stat-chart-title">Heart Procedures by STAT Level 2018-2020</div>
-    <div id="stat-chart-prompt-interaction">Select the patient age range:</div>
-    <div id="stat-chart-buttons">
-        <div class="stat-chart-btn" data-value="Newborns" role="button" tabindex="0">Newborns</div>
-        <div class="stat-chart-btn" data-value="Infants" role="button" tabindex="0">Infants</div>
-        <div class="stat-chart-btn" data-value="Children" role="button" tabindex="0">Children</div>
-        <div class="stat-chart-btn" data-value="Adults" role="button" tabindex="0">Adults</div>
-    </div>
-    <div id="stat-chart-1">&nbsp;</div>
-    <div id="stat-chart-1-legend">&nbsp;</div>
-    <style type="text/css">
-    #stat-chart-outermost {
+
+<div id="stat-chart-outermost"><!-- Load d3.js --><script src="https://d3js.org/d3.v4.js"></script>
+<div id="stat-chart-title">Heart Procedures by STAT Level 2018-2020</div>
+
+<div id="stat-chart-prompt-interaction">Select the patient age range:</div>
+
+<div id="stat-chart-buttons">
+<div class="stat-chart-btn" data-value="Newborns" role="button" tabindex="0">Newborns</div>
+
+<div class="stat-chart-btn" data-value="Infants" role="button" tabindex="0">Infants</div>
+
+<div class="stat-chart-btn" data-value="Children" role="button" tabindex="0">Children</div>
+
+<div class="stat-chart-btn" data-value="Adults" role="button" tabindex="0">Adults</div>
+</div>
+
+<div id="stat-chart-1">&nbsp;</div>
+
+<div id="stat-chart-1-legend">&nbsp;</div>
+<style type="text/css">#stat-chart-outermost {
         font-family: sans-serif;
     }
 
@@ -70,8 +75,8 @@
     #stat-chart-1-legend div {
         padding: 0px 5px;
     }
-    </style>
-    <script>
+</style>
+<script>
     var device_width = window.screen.width;
     console.log(device_width);
 
@@ -263,8 +268,9 @@
         for (i = 0; i < buttons.length; i++) {
             var firstWord = buttons[i].innerHTML.split("<br>")[0];
             firstWord.bold();
-            buttons[i].addEventListener("click", _filter)
-            buttons[i].addEventListener("keypress", _filter)
+            buttons[i].addEventListener("click", _filter);
+            buttons[i].addEventListener("keypress", _filter);
+            //buttons[i].tabIndex = 100;
         }
 
 
@@ -297,5 +303,13 @@
             .style('background-color', function(d) { return color(d); })
 
     })
-    </script>
-</div>
+
+        document.addEventListener('DOMContentLoaded', function(event) {
+            var buttons = document.getElementsByClassName("stat-chart-btn");
+            console.log("dom loaded");
+            for (i = 0; i < buttons.length; i++) {
+                buttons[i].tabIndex = 0;
+            }
+        })
+
+    </script></div>
