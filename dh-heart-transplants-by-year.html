@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- BEGIN HEART TRANSPLANT CHART -->
+<div id="heart-transplants-outermost">
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<div id="heart-transplants-per-year-chart-title">Heart Transplants Performed at Duke by Year</div>
+<div id="heart-transplants-per-year-chart"></div>
+<div id="heart-transplants-chart-note">Annual numbers include pediatric heart transplants.</div>
+<div id="heart-transplant-chart-source">Source: <a href=https://optn.transplant.hrsa.gov/data/view-data-reports/center-data/#>OPTN</a></div>
+
+<style>
+#heart-transplants-outermost{
+	font-family: sans-serif;
+	font-size: 12px;
+}
+#heart-transplants-per-year-chart-title{
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+}
+#heart-transplant-chart-source,
+#heart-transplants-chart-note{
+	text-align: center;
+	font-style: italic;
+	margin-top: 10px;
+}
+
+</style>
+
+<script>
+    var device_width = window.screen.width;
+    console.log(device_width);
+
+    var container = document.querySelector("#heart-transplants-outermost");
+    //var legend = document.querySelector("#stat-chart-1-legend");
+    var title = document.querySelector("#heart-transplants-per-year-chart-title");
+
+    // set the dimensions and margins of the graph
+    var margin = { top: 10, right: 30, bottom: 20, left: 30 },
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    var vbw = width + margin.left + margin.right;
+    var vbh = height + margin.top + margin.bottom
+
+    // append the svg object to the body of the page
+    if (device_width < 600) {
+        //using viewbox for mobile devices:
+        var svg = d3.select("#stat-chart-1")
+            .append("svg")
+            .attr("viewBox", "0 0 " + vbw + " " + vbh)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+        title.style.width = '100%';
+
+    } else {
+        //using height and width attributes
+        var svg = d3.select("#stat-chart-1")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        //legend.style.width = '310px';
+        //legend.style.marginLeft = '85px';
+        container.style.marginLeft = '15%';
+        container.style.width = '460px';
+
+    }
+
+
+
+// append the svg object to the body of the page
+var svg = d3.select("#heart-transplants-per-year-chart")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Parse the Data
+d3.csv("https://raw.githubusercontent.com/JakeRatliff/data/main/Duke%20Heart%20Transplant%20Data%20-%20Sheet1.csv", function(data) {
+	console.log(data);
+
+// X axis
+var x = d3.scaleBand()
+  .range([ 0, width ])
+  .domain(data.map(function(d) { console.log(d);return d.Year; }))
+  .padding(0.2);
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x))
+  .selectAll("text")
+  .attr("font-size", "12px")
+    //.attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "middle");
+
+// Add Y axis
+
+var y = d3.scaleLinear()
+  .domain([0, 110])
+  .range([ height, 0]);/*
+svg.append("g")
+  .call(d3.axisLeft(y));
+*/
+// Bars
+var selection = svg.selectAll("mybar");
+  selection.data(data)
+  .enter()
+  .append("rect")
+    .attr("x", function(d) { return x(d.Year); })
+    .attr("y", y(0))
+    .attr("width", x.bandwidth())
+    .attr("height", 0)
+    .attr("fill", "#00539B")
+    .attr("class", "transplants-bar")
+    .transition()
+    .duration(1500)
+    .attr("y", function(d) { return y(d["Heart Transplants"]); })
+    .attr("height", function(d) { return height - y(d["Heart Transplants"]); })
+    .delay(function(i,d){return(d*200)})
+  selection.data(data)
+  	.enter()
+  	.append("text")
+  	.attr("text-anchor", "middle")
+    .attr("x", function(d) { return x(d.Year) + 27.5; })
+    .attr("y", y(-6.5))
+    .attr("width", x.bandwidth())
+    .attr("height", 0)
+    .attr("fill", "white")
+    .attr("class", "transplants-bar-label")
+    .transition()
+    .duration(1500)
+    .attr("y", function(d) {return y(d["Heart Transplants"])+20; })
+    //.attr("height", function(d) { return height - y(d["Heart Transplants"]); })
+    //.text(function(d){return d["Heart Transplants"]})
+    .tween("text", function(d) {
+    var node = this;
+    var i = d3.interpolate(node.textContent, +d["Heart Transplants"]);
+    return function(t) {
+        node.textContent = Math.round(i(t));
+  	  }
+    })
+    .delay(function(i,d){return(d*200)})
+
+    	
+})
+
+</script>
+</div>
+<!-- END HEART TRANSPLANT CHART -->
