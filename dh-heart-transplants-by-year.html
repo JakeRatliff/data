@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
+<div style="height:1100px; width:100%; text-align:center; background-color: #db4f90; color:white; font-family: sans-serif;">Scroll down to see the chart.</div>
 <!-- BEGIN HEART TRANSPLANT CHART -->
 <div id="heart-transplants-outermost">
 <script src="https://d3js.org/d3.v4.js"></script>
@@ -10,7 +9,7 @@
 <div id="heart-transplants-per-year-chart-title">Heart Transplants Performed at Duke by Year</div>
 <div id="heart-transplants-per-year-chart"></div>
 <div id="heart-transplants-chart-note">Annual numbers include pediatric heart transplants.</div>
-<div id="heart-transplant-chart-source">Source: <a href=https://optn.transplant.hrsa.gov/data/view-data-reports/center-data/#>OPTN</a></div>
+<div id="heart-transplant-chart-source">Source: <a href="https://optn.transplant.hrsa.gov/data/view-data-reports/center-data/#">OPTN</a></div>
 
 <style>
 #heart-transplants-outermost{
@@ -50,7 +49,7 @@
     // append the svg object to the body of the page
     if (device_width < 600) {
         //using viewbox for mobile devices:
-        var svg = d3.select("#stat-chart-1")
+        var svg = d3.select("#heart-transplants-per-year-chart")
             .append("svg")
             .attr("viewBox", "0 0 " + vbw + " " + vbh)
             .append("g")
@@ -60,7 +59,7 @@
 
     } else {
         //using height and width attributes
-        var svg = d3.select("#stat-chart-1")
+        var svg = d3.select("#heart-transplants-per-year-chart")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -75,16 +74,6 @@
 
     }
 
-
-
-// append the svg object to the body of the page
-var svg = d3.select("#heart-transplants-per-year-chart")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
 
 // Parse the Data
 d3.csv("https://raw.githubusercontent.com/JakeRatliff/data/main/Duke%20Heart%20Transplant%20Data%20-%20Sheet1.csv", function(data) {
@@ -107,50 +96,57 @@ svg.append("g")
 
 var y = d3.scaleLinear()
   .domain([0, 110])
-  .range([ height, 0]);/*
-svg.append("g")
-  .call(d3.axisLeft(y));
-*/
-// Bars
-var selection = svg.selectAll("mybar");
-  selection.data(data)
-  .enter()
-  .append("rect")
-    .attr("x", function(d) { return x(d.Year); })
-    .attr("y", y(0))
-    .attr("width", x.bandwidth())
-    .attr("height", 0)
-    .attr("fill", "#00539B")
-    .attr("class", "transplants-bar")
-    .transition()
-    .duration(1500)
-    .attr("y", function(d) { return y(d["Heart Transplants"]); })
-    .attr("height", function(d) { return height - y(d["Heart Transplants"]); })
-    .delay(function(i,d){return(d*200)})
-  selection.data(data)
-  	.enter()
-  	.append("text")
-  	.attr("text-anchor", "middle")
-    .attr("x", function(d) { return x(d.Year) + 31; })
-    .attr("y", y(-6.5))
-    .attr("width", x.bandwidth())
-    .attr("height", 0)
-    .attr("fill", "white")
-    .attr("class", "transplants-bar-label")
-    .transition()
-    .duration(1500)
-    .attr("y", function(d) {return y(d["Heart Transplants"])+20; })
-    //.attr("height", function(d) { return height - y(d["Heart Transplants"]); })
-    //.text(function(d){return d["Heart Transplants"]})
-    .tween("text", function(d) {
-    var node = this;
-    var i = d3.interpolate(node.textContent, +d["Heart Transplants"]);
-    return function(t) {
-        node.textContent = Math.round(i(t));
-  	  }
-    })
-    .delay(function(i,d){return(d*200)})
+  .range([ height, 0]);
 
+var draw_2 = function(){
+	var selection = svg.selectAll("mybar");
+	  selection.data(data)
+	  .enter()
+	  .append("rect")
+	    .attr("x", function(d) { return x(d.Year); })
+	    .attr("y", y(0))
+	    .attr("width", x.bandwidth())
+	    .attr("height", 0)
+	    .attr("fill", "#00539B")
+	    .attr("class", "transplants-bar")
+	    .transition()
+	    .duration(1500)
+	    .attr("y", function(d) { return y(d["Heart Transplants"]); })
+	    .attr("height", function(d) { return height - y(d["Heart Transplants"]); })
+	    .delay(function(i,d){return(d*200)})
+	  selection.data(data)
+	  	.enter()
+	  	.append("text")
+	  	.attr("text-anchor", "middle")
+	    .attr("x", function(d) { return x(d.Year) + 31; })
+	    .attr("y", y(-6.5))
+	    .attr("width", x.bandwidth())
+	    .attr("height", 0)
+	    .attr("fill", "white")
+	    .attr("class", "transplants-bar-label")
+	    .transition()
+	    .duration(1500)
+	    .attr("y", function(d) {return y(d["Heart Transplants"])+20; })
+	    .tween("text", function(d) {
+	    var node = this;
+	    var i = d3.interpolate(node.textContent, +d["Heart Transplants"]);
+	    return function(t) {
+	        node.textContent = Math.round(i(t));
+	  	  }
+	    })
+	    .delay(function(i,d){return(d*200)})
+	}
+
+    var count = 0;
+    var chart = document.querySelector("#heart-transplants-per-year-chart");
+    document.addEventListener('scroll', function(e) {
+        var rect = chart.getBoundingClientRect();
+        if (rect.bottom-75 <= document.documentElement.clientHeight && count == 0) {
+          console.log(rect.bottom)
+          draw_2();
+          count++;
+        }
+    })
     	
 })
 
