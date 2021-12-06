@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<div style="height:1100px; width:100%; text-align:center; background-color: #db4f90; color:white; font-family: sans-serif;">Scroll down to see the chart.</div>
+<!-- begin chart -->
+<div id="transplants-wait-times-outermost">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <div id="transplants-wait-times-chart-title">Median Days to Transplant, Duke vs U.S.</div>
+    <div id="transplants-wait-times-chart"></div>
+    <div id="transplant-wait-times-chart-source">Source: <a href="https://www.srtr.org/PDFs/062021_release/pdfPSR/NCDUTX1HR202105PNEW.pdf">SRTR</a> July 2021</div>
+    <style>
+    #transplants-wait-times-outermost {
+        font-family: sans-serif;
+        font-size: 12px;
+    }
+
+    #transplants-wait-times-chart-title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        margin-left: 10px;
+    }
+
+    #transplant-wait-times-chart-source {
+        text-align: center;
+        font-style: italic;
+        margin-left: 10px;
+    }
+
+    .transplant-wait-time-y-axis {
+        font-size: 12px;
+    }
+    </style>
+    <script>
+
+    var chart_el = "#transplants-wait-times-chart";
+    var data = [{ "source": "U.S.", "days": 189, "color": "#E0750B" }, { "source": "Duke", "days": 82, "color": "#00539B" }];
+
+    var device_width = window.screen.width;
+    console.log(device_width);
+
+    var container = document.querySelector("#transplants-wait-times-outermost");
+    var title = document.querySelector("#transplants-wait-times-chart-title");
+
+    var margin = { top: 10, right: 30, bottom: 20, left: 36 },
+        width = 460 - margin.left - margin.right,
+        height = 200 - margin.top - margin.bottom;
+
+    var vbw = width + margin.left + margin.right;
+    var vbh = height + margin.top + margin.bottom
+
+    if (device_width < 600) {
+        var svg = d3.select("#transplants-wait-times-chart")
+            .append("svg")
+            .attr("viewBox", "0 0 " + vbw + " " + vbh)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+        title.style.width = '100%';
+
+    } else {
+        var svg = d3.select("#transplants-wait-times-chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        container.style.marginLeft = '15%';
+        container.style.width = '460px';
+
+    }
+
+    var y = d3.scaleBand()
+        .range([height, 0])
+        .padding(0.1);
+
+    var x = d3.scaleLinear()
+        .range([0, width]);
+    data.forEach(function(d) {
+        d.days = +d.days;
+    });
+
+    x.domain([0, d3.max(data, function(d) { return d.days; })])
+    y.domain(data.map(function(d) { return d.source; }));
+
+    var draw_1 = function(){
+      svg.selectAll(".bar")
+          .data(data)
+          .enter().append("rect")
+          .attr("class", "bar")
+          .attr("fill", function(d) { return d.color })
+          .attr("width", function(d) { return x(0); })
+          .attr("y", function(d) { return y(d.source); })
+          .attr("height", y.bandwidth())
+          .transition()
+          .duration(function(d) { var days = d.days; var t = days * 20; return t })
+          .ease(d3.easeLinear)
+          .attr("width", function(d) { return x(d.days); });
+      svg.selectAll(".bar-label")
+          .data(data)
+          .enter().append("text")
+          .attr("class", "bar-label")
+          .attr("fill", "white")
+          .attr("font-size", "14px")
+          .attr("font-weight", "bold")
+          .attr("width", function(d) { return x(d.days); })
+          .attr("y", function(d) { return y(d.source) + 41; })
+          .attr("x", function(d) { return x(0) - 15 })
+          .attr("text-anchor", "end")
+          .attr("height", y.bandwidth())
+          .transition()
+          .duration(function(d) { var days = d.days; var t = days * 20; return t })
+          .ease(d3.easeLinear)
+          .attr("x", function(d) { return x(d.days) - 15 })
+          .tween("text", function(d) {
+              var node = this;
+              var i = d3.interpolate(node.textContent, d.days);
+              return function(t) {
+                  node.textContent = Math.round(i(t));
+              }
+          });
+      }
+        var count = 0;
+        var chart = document.querySelector("#transplants-wait-times-chart");
+        document.addEventListener('scroll', function(e) {
+            var rect = chart.getBoundingClientRect();
+            if (rect.bottom-75 <= document.documentElement.clientHeight && count == 0) {
+              console.log(rect.bottom)
+              draw_1();
+              count++;
+            }
+        })
+
+
+    svg.append("g")
+        .attr("class", "transplant-wait-time-y-axis")
+        .call(d3.axisLeft(y));
+    </script>
+</div>
+<!-- end chart -->
