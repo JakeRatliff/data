@@ -39,12 +39,12 @@
     var title = document.querySelector("#heart-transplants-per-year-chart-title");
 
     // set the dimensions and margins of the graph
-    var margin = { top: 10, right: 30, bottom: 20, left: 30 },
-        width = 460 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+    var margin_1 = { top: 10, right: 30, bottom: 20, left: 30 },
+        width_1 = 460 - margin_1.left - margin_1.right,
+        height_1 = 400 - margin_1.top - margin_1.bottom;
 
-    var vbw = width + margin.left + margin.right;
-    var vbh = height + margin.top + margin.bottom
+    var vbw = width_1 + margin_1.left + margin_1.right;
+    var vbh = height_1 + margin_1.top + margin_1.bottom
 
     // append the svg object to the body of the page
     if (device_width < 600) {
@@ -54,18 +54,18 @@
             .attr("viewBox", "0 0 " + vbw + " " + vbh)
             .append("g")
             .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
+                "translate(" + margin_1.left + "," + margin_1.top + ")");
         title.style.width = '100%';
 
     } else {
         //using height and width attributes
         var svg_1 = d3.select("#heart-transplants-per-year-chart")
             .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width_1 + margin_1.left + margin_1.right)
+            .attr("height", height_1 + margin_1.top + margin_1.bottom)
             .append("g")
             .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
+                "translate(" + margin_1.left + "," + margin_1.top + ")");
 
         //legend.style.width = '310px';
         //legend.style.marginLeft = '85px';
@@ -81,11 +81,11 @@ d3.csv("https://raw.githubusercontent.com/JakeRatliff/data/main/Duke%20Heart%20T
 
 // X axis
 var x = d3.scaleBand()
-  .range([ 0, width ])
+  .range([ 0, width_1 ])
   .domain(data.map(function(d) { console.log(d);return d.Year; }))
   .padding(0.2);
 svg_1.append("g")
-  .attr("transform", "translate(0," + height + ")")
+  .attr("transform", "translate(0," + height_1 + ")")
   .call(d3.axisBottom(x))
   .selectAll("text")
   .attr("font-size", "12px")
@@ -96,7 +96,7 @@ svg_1.append("g")
 
 var y = d3.scaleLinear()
   .domain([0, 110])
-  .range([ height, 0]);
+  .range([ height_1, 0]);
 
 var draw_2 = function(){
 	var selection = svg_1.selectAll("mybar");
@@ -112,7 +112,7 @@ var draw_2 = function(){
 	    .transition()
 	    .duration(1500)
 	    .attr("y", function(d) { return y(d["Heart Transplants"]); })
-	    .attr("height", function(d) { return height - y(d["Heart Transplants"]); })
+	    .attr("height", function(d) { return height_1 - y(d["Heart Transplants"]); })
 	    .delay(function(i,d){return(d*200)})
 	  selection.data(data)
 	  	.enter()
