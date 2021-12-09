@@ -97,6 +97,9 @@ svg_1.append("g")
 var y = d3.scaleLinear()
   .domain([0, 110])
   .range([ height_1, 0]);
+  svg_1.append("g")
+    .call(d3.axisLeft(y));
+var _duration_1 = 2500;//function(i,d){var t = (d+1)*500; console.log(t);return t};
 
 var draw_2 = function(){
 	var selection = svg_1.selectAll("mybar");
@@ -110,7 +113,7 @@ var draw_2 = function(){
 	    .attr("fill", "#00539B")
 	    .attr("class", "transplants-bar")
 	    .transition()
-	    .duration(1500)
+	    .duration(_duration_1) //3000
 	    .attr("y", function(d) { return y(d["Heart Transplants"]); })
 	    .attr("height", function(d) { return height_1 - y(d["Heart Transplants"]); })
 	    .delay(function(i,d){return(d*200)})
@@ -125,7 +128,7 @@ var draw_2 = function(){
 	    .attr("fill", "white")
 	    .attr("class", "transplants-bar-label")
 	    .transition()
-	    .duration(1500)
+	    .duration(_duration_1) //3000
 	    .attr("y", function(d) {return y(d["Heart Transplants"])+20; })
 	    .tween("text", function(d) {
 	    var node = this;
