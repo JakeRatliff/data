@@ -93,6 +93,7 @@
           .attr("fill", function(d) { return d.color })
           .attr("width", function(d) { return x(0); })
           .attr("y", function(d) { return y(d.source); })
+          .attr("x", 0.35)
           .attr("height", y.bandwidth())
           .transition()
           .duration(function(d) { var days = d.days; var t = days * 20; return t })
