@@ -1,0 +1,11 @@
+Patient Type,STAT Level,Procedures
+Newborns,STAT 1,1
+Newborns,STAT 2,35
+Newborns,STAT 3,30
+Newborns,STAT 4,97
+Newborns,STAT 5,66
+All,STAT 1,326
+All,STAT 2,466
+All,STAT 3,163
+All,STAT 4,360
+All,STAT 5,74
