@@ -156,7 +156,7 @@ var y_CD211A42 = d3.scaleLinear()
   .domain([50, 100])
   .range([ height_CD211A42, 0]);
   svg_CD211A42.append("g")
-    .call(d3.axisLeft(y_CD211A42));
+    .call(d3.axisLeft(y_CD211A42).ticks(6));
 
 var _duration_CD211A42 = 2500;
 
