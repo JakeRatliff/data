@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<div style="height:1100px; width:100%; text-align:center; background-color: #db4f90; color:white; font-family: sans-serif;">Scroll down to see the chart.</div>
+<!-- BEGIN HEART TRANSPLANT CHART -->
+<div id="A7DB0E98-outermost">
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<div id="A7DB0E98-chart-title">Duke CHD Survival Rates Compared to National Average (%)</div>
+<div id="A7DB0E98-legend"></div>
+<div id="A7DB0E98-chart"></div>
+<!--div id="A7DB0E98-chart-note">Annual numbers include pediatric heart transplants.</div-->
+<div id="A7DB0E98-chart-source">Sources: STS Database, Table 16, July 2016 - June 2020. Duke Internal Data, 2018-2021.</div>
+ 
+<style>
+#A7DB0E98-outermost{
+	font-family: sans-serif;
+	font-size: 12px;
+  text-align: center;
+}
+#A7DB0E98-chart-title{
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+}
+#A7DB0E98-chart-source,
+#A7DB0E98-chart-note{
+	text-align: center;
+	font-style: italic;
+	margin-top: 10px;
+}
+#A7DB0E98-legend{
+    border: 1px solid darkgray;
+    justify-content: center;
+    display: flex;
+    padding: 5px;
+    border-radius: 2px;
+    margin-top: 5px;
+    width: 260px;
+    margin-left: 20%
+}
+
+#A7DB0E98-legend div{
+  padding: 0 8px;
+}
+
+</style>
+
+<script>
+    var device_width = window.screen.width;
+    console.log(device_width);
+
+    var container_A7DB0E98 = document.querySelector("#A7DB0E98-outermost");
+    //var legend = document.querySelector("#stat-chart-1-legend");
+    var title_A7DB0E98 = document.querySelector("#A7DB0E98-chart-title");
+
+    // set the dimensions and margins of the graph
+    var margin_A7DB0E98 = { top: 10, right: 30, bottom: 20, left: 230 },
+        width_A7DB0E98 = 460 - margin_A7DB0E98.left - margin_A7DB0E98.right,
+        height_A7DB0E98 = 500 - margin_A7DB0E98.top - margin_A7DB0E98.bottom;
+
+    var vbw_A7DB0E98 = width_A7DB0E98 + margin_A7DB0E98.left + margin_A7DB0E98.right;
+    var vbh_A7DB0E98 = height_A7DB0E98 + margin_A7DB0E98.top + margin_A7DB0E98.bottom
+
+    // append the svg object to the body of the page
+    if (device_width < 600) {
+        //using viewbox for mobile devices:
+        var svg_A7DB0E98 = d3.select("#A7DB0E98-chart")
+            .append("svg")
+            .attr("viewBox", "0 0 " + vbw_A7DB0E98 + " " + vbh_A7DB0E98)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin_A7DB0E98.left + "," + margin_A7DB0E98.top + ")");
+        title_A7DB0E98.style.width = '100%';
+
+    } else {
+        //using height and width attributes
+        var svg_A7DB0E98 = d3.select("#A7DB0E98-chart")
+            .append("svg")
+            .attr("width", width_A7DB0E98 + margin_A7DB0E98.left + margin_A7DB0E98.right)
+            .attr("height", height_A7DB0E98 + margin_A7DB0E98.top + margin_A7DB0E98.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin_A7DB0E98.left + "," + margin_A7DB0E98.top + ")");
+
+        //legend.style.width = '310px';
+        //legend.style.marginLeft = '85px';
+        container_A7DB0E98.style.marginLeft = '15%';
+        container_A7DB0E98.style.width = '460px';
+
+    }
+
+
+// Parse the Data
+d3.csv("https://raw.githubusercontent.com/JakeRatliff/data/main/dh_heart_survival_by_procedure%20-%20Sheet1.csv", function(data) {
+	console.log(data);
+
+var subgroups_A7DB0E98 = data.columns.slice(1)
+//subgroups.pop()
+console.log('subgroups', subgroups_A7DB0E98)
+
+var groups_A7DB0E98 = d3.map(data, function(d) { return (d['CHD Procedure Type']) }).keys()
+console.log('groups', groups_A7DB0E98)
+
+// Add y axis
+var y_A7DB0E98 = d3.scaleBand()
+    .domain(groups_A7DB0E98)
+    .range([0, height_A7DB0E98])
+    .padding([0.2])
+
+svg_A7DB0E98.append("g")
+  .attr("transform", "translate(0,0)")
+  .call(d3.axisLeft(y_A7DB0E98))
+  .selectAll("text")
+  .attr("font-size", "12px")
+    .attr("transform", "translate(-1,0)")
+    .style("text-anchor", "end")
+    .style("font-weight", "bold");
+
+// Another scale for subgroup position
+var ySubgroup_A7DB0E98 = d3.scaleBand()
+  .domain(subgroups_A7DB0E98)
+  .range([0, y_A7DB0E98.bandwidth()])
+  .padding([0.05])
+
+// color palette = one color per subgroup
+var color_A7DB0E98 = d3.scaleOrdinal()
+  .domain(subgroups_A7DB0E98)
+  .range(['#00539B', '#E0750B'])
+
+var legend_A7DB0E98 = d3.select('#A7DB0E98-legend')
+        .selectAll('div')
+        .data(subgroups_A7DB0E98)
+        .enter()
+        .append('div')
+        .text(function(d) {
+            return d;
+        })
+        .append('div')
+        .style('float', 'left')
+        .style('height', '10px')
+        .style('width', '10px')
+        .style('margin-right', '4px')
+        .style('margin-top', '2px')
+        .style('background-color', function(d) { return color_A7DB0E98(d); })
+
+
+// Add x axis
+
+var x_A7DB0E98 = d3.scaleLinear()
+  .domain([50, 100])
+  .range([ 0, width_A7DB0E98]);
+  svg_A7DB0E98.append("g")
+    .attr('transform', "translate(0," + height_A7DB0E98 + ")")
+    .call(d3.axisBottom(x_A7DB0E98).ticks(6));
+
+var _duration_A7DB0E98 = 2500;
+
+var draw_A7DB0E98 = function(){
+	var selection = svg_A7DB0E98.selectAll("bar_A7DB0E98");
+	  selection.data(data)
+	  .enter()
+    .append("g")
+        .attr("transform", function(d) { console.log(y_A7DB0E98(d['CHD Procedure Type'])); return "translate(0," + y_A7DB0E98(d['CHD Procedure Type']) + ")"; })
+        .attr("class", "groups_A7DB0E98")
+        .selectAll("rect")
+        .data(function(d) { return subgroups_A7DB0E98.map(function(key) { return {key: key, value: d[key]}; }); })
+        .enter().append("rect")
+          .attr("x", x_A7DB0E98(50) )
+          .attr("y", function(d) { return ySubgroup_A7DB0E98(d.key); })
+          .attr("height", ySubgroup_A7DB0E98.bandwidth())
+          .attr("fill", function(d) { return color_A7DB0E98(d.key); })
+
+          .transition()
+          .duration(_duration_A7DB0E98) 
+          .attr("x", function(d) { return x_A7DB0E98(50); })
+          .attr("width", function(d) { return x_A7DB0E98(d.value); })
+          //.delay(function(i,d){return(d*200)})
+
+
+    var bars_g_A7DB0E98 = selection.select('g');
+    console.log(bars_g_A7DB0E98)
+    bars_g_A7DB0E98.data(data).enter().append('g')
+          .attr("transform", function(d) { console.log(y_A7DB0E98(d['CHD Procedure Type'])); return "translate(0," + y_A7DB0E98(d['CHD Procedure Type']) + ")"; })
+          .attr("class", "groups_A7DB0E98")
+          .selectAll("text")
+          .data(function(d) { return subgroups_A7DB0E98.map(function(key) { return {key: key, value: d[key]}; }); })
+          .enter().append("text")
+            .attr("x", function(d) { return x_A7DB0E98(d.value) - 5; })
+            .attr("y", function(d) { return ySubgroup_A7DB0E98(d.key) + 12; })
+            .attr("height", ySubgroup_A7DB0E98.bandwidth())
+            .attr("fill", "white")
+            .attr("font-size", "smaller")
+            .attr("text-anchor", 'end')
+            .text(function(d) { return Number(d.value).toFixed(1) })
+            .attr('opacity', "0%")
+            //.text(function(d) { return Number(d.value).toFixed(1) })
+
+
+            .transition()
+            .duration(1500)
+            .attr("opacity", "100%")
+            .delay(_duration_A7DB0E98)
+
+  
+	}
+
+    var count_A7DB0E98 = 0;
+    var chart_A7DB0E98 = document.querySelector("#A7DB0E98-chart");
+    document.addEventListener('scroll', function(e) {
+        var rect_A7DB0E98 = chart_A7DB0E98.getBoundingClientRect();
+        if (rect_A7DB0E98.bottom-75 <= document.documentElement.clientHeight && count_A7DB0E98 == 0) {
+          console.log(rect_A7DB0E98.bottom)
+          draw_A7DB0E98();
+          count_A7DB0E98++;
+        }
+    })
+    	
+})
+
+</script>
+</div>
+<!-- END HEART TRANSPLANT CHART -->
