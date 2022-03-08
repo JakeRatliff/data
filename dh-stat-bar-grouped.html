@@ -6,7 +6,7 @@
 <div id="CD211A42-outermost">
 <script src="https://d3js.org/d3.v4.js"></script>
 
-<div id="CD211A42-chart-title">Duke CHD Survival Rates Compared to National Average (%)</div>
+<div id="CD211A42-chart-title">Survival Rate by STAT Category, Duke vs US (%)</div>
 <div id="CD211A42-legend"></div>
 <div id="CD211A42-chart"></div>
 <!--div id="CD211A42-chart-note">Annual numbers include pediatric heart transplants.</div-->
@@ -102,12 +102,13 @@ console.log('subgroups', subgroups_CD211A42)
 var groups_CD211A42 = d3.map(data, function(d) { return (d['STAT Category']) }).keys()
 console.log('groups', groups_CD211A42)
 
+/*
 // X axis
 var x_CD211A42 = d3.scaleBand()
   .range([ 0, width_CD211A42 ])
   .domain(data.map(function(d) { console.log(d);return d.Year; }))
   .padding(0.2);
-
+*/
  // Add X axis
   var x_CD211A42 = d3.scaleBand()
       .domain(groups_CD211A42)
@@ -153,7 +154,7 @@ var legend_CD211A42 = d3.select('#CD211A42-legend')
 // Add Y axis
 
 var y_CD211A42 = d3.scaleLinear()
-  .domain([50, 100])
+  .domain([80, 100])
   .range([ height_CD211A42, 0]);
   svg_CD211A42.append("g")
     .call(d3.axisLeft(y_CD211A42).ticks(6));
@@ -171,7 +172,7 @@ var draw_CD211A42 = function(){
         .data(function(d) { return subgroups_CD211A42.map(function(key) { return {key: key, value: d[key]}; }); })
         .enter().append("rect")
           .attr("x", function(d) { return xSubgroup_CD211A42(d.key); })
-          .attr("y", y_CD211A42(50))
+          .attr("y", y_CD211A42(80))
           .attr("width", xSubgroup_CD211A42.bandwidth())
           .attr("height", 0)
           .attr("fill", function(d) { return color_CD211A42(d.key); })
