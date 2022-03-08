@@ -148,7 +148,7 @@ var legend_A7DB0E98 = d3.select('#A7DB0E98-legend')
 // Add x axis
 
 var x_A7DB0E98 = d3.scaleLinear()
-  .domain([50, 100])
+  .domain([80, 100])
   .range([ 0, width_A7DB0E98]);
   svg_A7DB0E98.append("g")
     .attr('transform', "translate(0," + height_A7DB0E98 + ")")
@@ -166,14 +166,14 @@ var draw_A7DB0E98 = function(){
         .selectAll("rect")
         .data(function(d) { return subgroups_A7DB0E98.map(function(key) { return {key: key, value: d[key]}; }); })
         .enter().append("rect")
-          .attr("x", x_A7DB0E98(50) )
+          .attr("x", x_A7DB0E98(80) )
           .attr("y", function(d) { return ySubgroup_A7DB0E98(d.key); })
           .attr("height", ySubgroup_A7DB0E98.bandwidth())
           .attr("fill", function(d) { return color_A7DB0E98(d.key); })
 
           .transition()
           .duration(_duration_A7DB0E98) 
-          .attr("x", function(d) { return x_A7DB0E98(50); })
+          .attr("x", function(d) { return x_A7DB0E98(80); })
           .attr("width", function(d) { return x_A7DB0E98(d.value); })
           //.delay(function(i,d){return(d*200)})
 
