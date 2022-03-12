@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<div style="height:1100px; width:100%; text-align:center; background-color: #db4f90; color:white; font-family: sans-serif;">Scroll down to see the chart.</div>
+<!-- BEGIN CHART -->
+<div id="multi-organ-transplants-outermost_704C08D9">
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<div id="multi-organ-transplants-per-year-chart-title_704C08D9">Multi-Organ Transplants Performed at Duke by Year</div>
+<div id="multi-organ-transplants-per-year-chart_704C08D9"></div>
+<!--div id="multi-organ-transplants-chart-note"></div-->
+<div id="multi-organ-transplant-chart-source_704C08D9">Source: <a href="https://optn.transplant.hrsa.gov/data/view-data-reports/center-data/#">OPTN</a></div>
+
+<style>
+#multi-organ-transplants-outermost_704C08D9{
+	font-family: sans-serif;
+	font-size: 12px;
+}
+#multi-organ-transplants-per-year-chart-title_704C08D9{
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+}
+#multi-organ-transplant-chart-source_704C08D9,
+#multi-organ-transplants-chart-note_704C08D9{
+	text-align: center;
+	font-style: italic;
+	margin-top: 10px;
+}
+
+</style>
+
+<script>
+    var device_width = window.screen.width;
+    console.log(device_width);
+
+    var container_704C08D9 = document.querySelector("#multi-organ-transplants-outermost_704C08D9");
+    //var legend = document.querySelector("#stat-chart-1-legend");
+    var title_704C08D9 = document.querySelector("#multi-organ-transplants-per-year-chart-title_704C08D9");
+
+    // set the dimensions and margins of the graph
+    var margin_704C08D9 = { top: 10, right: 30, bottom: 20, left: 30 },
+        width_704C08D9 = 460 - margin_704C08D9.left - margin_704C08D9.right,
+        height_704C08D9 = 240 - margin_704C08D9.top - margin_704C08D9.bottom;
+
+    var vbw_704C08D9 = width_704C08D9 + margin_704C08D9.left + margin_704C08D9.right;
+    var vbh_704C08D9 = height_704C08D9 + margin_704C08D9.top + margin_704C08D9.bottom
+
+    // append the svg object to the body of the page
+    if (device_width < 600) {
+        //using viewbox for mobile devices:
+        var svg_704C08D9 = d3.select("#multi-organ-transplants-per-year-chart_704C08D9")
+            .append("svg")
+            .attr("viewBox", "0 0 " + vbw + " " + vbh)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin_704C08D9.left + "," + margin_704C08D9.top + ")");
+        title_704C08D9.style.width = '100%';
+
+    } else {
+        //using height and width attributes
+        var svg_704C08D9 = d3.select("#multi-organ-transplants-per-year-chart_704C08D9")
+            .append("svg")
+            .attr("width", width_704C08D9 + margin_704C08D9.left + margin_704C08D9.right)
+            .attr("height", height_704C08D9 + margin_704C08D9.top + margin_704C08D9.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin_704C08D9.left + "," + margin_704C08D9.top + ")");
+
+        //legend.style.width = '310px';
+        //legend.style.marginLeft = '85px';
+        container_704C08D9.style.margin = '0 auto';
+        container_704C08D9.style.width = '460px';
+
+    }
+
+
+// Parse the Data
+d3.csv("https://raw.githubusercontent.com/JakeRatliff/data/main/multi-organ-transplant%20-%20Sheet1.csv", function(data) {
+	console.log(data);
+
+// X axis
+var x_704C08D9 = d3.scaleBand()
+  .range([ 0, width_704C08D9 ])
+  .domain(data.map(function(d) { console.log(d);return d.Year; }))
+  .padding(0.2);
+svg_704C08D9.append("g")
+  .attr("transform", "translate(0," + height_704C08D9 + ")")
+  .call(d3.axisBottom(x_704C08D9))
+  .selectAll("text")
+  .attr("font-size", "12px")
+    //.attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "middle");
+
+// Add Y axis
+
+var y_704C08D9 = d3.scaleLinear()
+  .domain([0, 40])
+  .range([ height_704C08D9, 0]);
+  svg_704C08D9.append("g")
+    .call(d3.axisLeft(y_704C08D9));
+var _duration_704C08D9 = 2500;//function(i,d){var t = (d+1)*500; console.log(t);return t};
+
+var draw_704C08D9 = function(){
+	var selection = svg_704C08D9.selectAll("mybar");
+	  selection.data(data)
+	  .enter()
+	  .append("rect")
+	    .attr("x", function(d) { return x_704C08D9(d.Year); })
+	    .attr("y", y_704C08D9(0))
+	    .attr("width", x_704C08D9.bandwidth())
+	    .attr("height", 0)
+	    .attr("fill", "#00539B")
+	    .attr("class", "transplants-bar_704C08D9")
+	    .transition()
+	    .duration(_duration_704C08D9) //3000
+	    .attr("y", function(d) { return y_704C08D9(d["Multi-organ Transplants"]); })
+	    .attr("height", function(d) { return height_704C08D9 - y_704C08D9(d["Multi-organ Transplants"]); })
+	    .delay(function(i,d){return(d*200)})
+	  selection.data(data)
+	  	.enter()
+	  	.append("text")
+	  	.attr("text-anchor", "middle")
+	    .attr("x", function(d) { return x_704C08D9(d.Year) + 31; })
+	    .attr("y", y_704C08D9(-3.5))
+	    .attr("width", x_704C08D9.bandwidth())
+	    .attr("height", 0)
+	    .attr("fill", "white")
+	    .attr("class", "transplants-bar_704C08D9-label")
+	    .transition()
+	    .duration(_duration_704C08D9) //3000
+	    .attr("y", function(d) {return y_704C08D9(d["Multi-organ Transplants"])+20; })
+	    .tween("text", function(d) {
+	    var node_704C08D9 = this;
+	    var i_704C08D9 = d3.interpolate(node_704C08D9.textContent, +d["Multi-organ Transplants"]);
+	    return function(t) {
+	        node_704C08D9.textContent = Math.round(i_704C08D9(t));
+	  	  }
+	    })
+	    .delay(function(i_704C08D9,d){return(d*200)})
+	}
+
+    var count_704C08D9 = 0;
+    var chart_704C08D9 = document.querySelector("#multi-organ-transplants-per-year-chart_704C08D9");
+    document.addEventListener('scroll', function(e) {
+        var rect_704C08D9 = chart_704C08D9.getBoundingClientRect();
+        if (rect_704C08D9.bottom-75 <= document.documentElement.clientHeight && count_704C08D9 == 0) {
+          console.log(rect_704C08D9.bottom)
+          draw_704C08D9();
+          count_704C08D9++;
+        }
+    })
+    	
+})
+
+</script>
+</div>
+<!-- END CHART -->
