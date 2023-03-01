@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <div id="tall_div" style="height:2500px; width:100px; background-color: pink;">This div is here to take up space. Scroll down to see what chart looks like when scrolled into view.</div>
+
+
+<!-- BEGIN CHART -->
+
 <div id="graph_and_legend_container">
-    <div id="valve_graph_title">Number of Mitral Valves Repair and Replacement Surgeries at Duke from 2015 - 2020</div>
+    <div id="valve_graph_title">Number of Mitral Valves Repair and Replacement Surgeries at Duke from 2015 - 2021</div>
     <div id="valve_repair_replace_procedures_legend"></div>
     <div id="valve_repair_replace_procedures_2015-2020"></div>
-    <div id="valve_graph_data_source">Source: Duke Health data, 2015-2020</div>
+    <div id="valve_graph_data_source">Source: Duke Health data, 2015-2021</div>
 </div>
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 <style>
 #valve_repair_replace_procedures_2015-2020 text,
 #valve_repair_replace_procedures_legend {
+    font: 12px Helvetica;
+}
+
+text {
     font: 12px Helvetica;
 }
 
@@ -54,7 +62,7 @@
 }
 
 .toolTip {
-	display: none;
+    display: none;
     font: 12px Helvetica;
     position: absolute;
     min-width: 50px;
@@ -222,7 +230,7 @@ d3.csv("https://raw.githubusercontent.com/JakeRatliff/dh-valve-data/main/Valves%
         .on("click", function(d) {
             if (device_width < 600) {
                 tooltip
-                	//.style("font-size", "25px")
+                    //.style("font-size", "25px")
                     .style("left", d3.event.pageX - 35 + "px")
                     .style("top", d3.event.pageY - 25 + "px")
                     .style("display", "inline-block")
@@ -238,7 +246,7 @@ d3.csv("https://raw.githubusercontent.com/JakeRatliff/dh-valve-data/main/Valves%
         .attr("x", function(d) { return x(d.data.Year); })
         .attr("y", function(d) { return y(+d.data['Repaired Valves'] / 2); })
         .attr("text-anchor", "middle")
-        .attr("dx", 24)
+        .attr("dx", 21)
         .text(function(d) { console.log(d); return d.data['Repaired Valves'] })
         .style("opacity", "0%");
 
@@ -250,7 +258,7 @@ d3.csv("https://raw.githubusercontent.com/JakeRatliff/dh-valve-data/main/Valves%
         .attr("x", function(d) { return x(d.data.Year); })
         .attr("y", function(d) { return y(+d.data['Repaired Valves'] + (+d.data['Replaced Valves'] / 2)); })
         .attr("text-anchor", "middle")
-        .attr("dx", 24)
+        .attr("dx", 21)
         .text(function(d) { console.log(d); return d.data['Replaced Valves'] })
         .style("opacity", "0%");
 
@@ -272,3 +280,5 @@ d3.csv("https://raw.githubusercontent.com/JakeRatliff/dh-valve-data/main/Valves%
 
 })
 </script>
+
+<!-- END CHART -->
