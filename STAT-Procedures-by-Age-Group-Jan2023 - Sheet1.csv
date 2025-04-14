@@ -1,11 +1,11 @@
 PatientAge,STAT,Procedures
-Newborns,STAT 1,15
-Newborns,STAT 2,36
-Newborns,STAT 3,48
-Newborns,STAT 4,52
-Newborns,STAT 5,88
-All,STAT 1,660
-All,STAT 2,363
-All,STAT 3,259
-All,STAT 4,157
-All,STAT 5,103
+Newborns,STAT 1,11
+Newborns,STAT 2,34
+Newborns,STAT 3,50
+Newborns,STAT 4,54
+Newborns,STAT 5,96
+All,STAT 1,693
+All,STAT 2,374
+All,STAT 3,281
+All,STAT 4,158
+All,STAT 5,109
