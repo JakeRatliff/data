@@ -1,11 +1,12 @@
 CHD Procedure Type,Duke,U.S.
-Ventricular Septal Defect (VSD) Repair,100,99.70
-Fontan,98.3,99.00
-Coarctation,100,99.00
-Glenn/Hemi-Fontan,97.50,98.50
-Tetralogy of Fallot,100,99.30
-Atrioventricular Canal Repair,100,97.90
-Arterial Switch Operation (ASO),100,98.10
-ASO and VSD Repair,100,95.90
-Truncus Arteriosus Repair,100,93.00
-Norwood,92.80,88.00
+Ventricular Septal Defect (VSD) Repair,99.00,99.70
+Fontan,98.2,99.00
+Coarctation,100.00,98.80
+Glenn/Hemi-Fontan,100.00,98.70
+Tetralogy of Fallot,100.00,99.30
+Atrioventricular Canal Repair,100.00,97.70
+Arterial Switch Operation (ASO),100.00,98.20
+ASO and VSD Repair,100.00,95.80
+Truncus Arteriosus Repair,100.00,93.80
+Norwood,92.90,87.00
+
